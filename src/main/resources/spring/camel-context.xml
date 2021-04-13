@@ -63,11 +63,17 @@
                     <transform id="_transform1">
                         <simple>${header.carEvacuation}</simple>
                     </transform>
+                    <setHeader headerName="CamelHttpResponseCode" id="_setHeader3">
+                        <constant>201</constant>
+                    </setHeader>
                 </when>
                 <otherwise id="_otherwise1">
                     <transform id="_transform2">
                         <constant>Add car failed.</constant>
                     </transform>
+                    <setHeader headerName="CamelHttpResponseCode" id="_setHeader4">
+                        <constant>400</constant>
+                    </setHeader>
                 </otherwise>
             </choice>
         </route>
