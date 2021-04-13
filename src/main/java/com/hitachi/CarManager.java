@@ -16,7 +16,7 @@ public class CarManager {
     }
 
 	private static void init() {
-		String owner ="Johnson";
+		String owner ="laurent";
 		Car car1 = new Car("86", "Toyota GT86", 2020);
 		Car car2 = new Car("brz", "Subaru BRZ", 2012);
 		Car car3 = new Car("roadster", "Mazda MX-5", 2015);
