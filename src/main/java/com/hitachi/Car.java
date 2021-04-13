@@ -1,12 +1,16 @@
 package com.hitachi;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Car {
 
 	private String name;
 	private String model;
 	private int year;
 
-	public Car(String name, String model, int year) {
+	@JsonCreator
+	public Car(@JsonProperty("name") String name, @JsonProperty("model") String model, @JsonProperty("year") int year) {
 		this.name = name;
 		this.model = model;
 		this.year = year;
@@ -35,7 +39,7 @@ public class Car {
 	public int getYear() {
 		return year;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "{name=" + name + ", model=" + model + ", year=" + year + "}";

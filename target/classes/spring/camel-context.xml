@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring       http://camel.apache.org/schema/spring/camel-spring.xsd">
+    <bean class="com.hitachi.CarManager" id="carManager"/>
+    <camelContext id="context-c53ac1ab-9476-4933-bff5-71a6ab795382" xmlns="http://camel.apache.org/schema/spring">
+        <onException>
+            <exception>java.lang.Exception</exception>
+            <handled>
+                <constant>true</constant>
+            </handled>
+            <setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
+                <constant>500</constant>
+            </setHeader>
+            <setBody>
+                <simple>${exception.message}</simple>
+            </setBody>
+        </onException>
+        <rest enableCORS="true" id="rest-for-openapi-document" path="/">
+            <get id="openapi.json" produces="application/json" uri="openapi.json">
+                <description>Gets the OpenAPI document for this service</description>
+                <route id="route-for-openapi-document">
+                    <setHeader headerName="Exchange.CONTENT_TYPE" id="setHeader-for-openapi-document">
+                        <constant>application/vnd.oai.openapi+json</constant>
+                    </setHeader>
+                    <setBody id="setBody-for-openapi-document">
+                        <constant>resource:classpath:openapi.json</constant>
+                    </setBody>
+                </route>
+            </get>
+        </rest>
+        <rest bindingMode="json" enableCORS="true" id="rest-d22780e1-f94e-422e-bf0d-75bcf2e54293">
+            <get id="getCarsOp" uri="/owner/{owner}/car">
+                <description>List all cars of owner description</description>
+                <param description="Result page wanted" name="page"
+                    required="false" type="query"/>
+                <param description="Number of result in page"
+                    name="limit" required="false" type="query"/>
+                <to uri="direct:getCarsOp"/>
+            </get>
+            <post consumes="application/json" id="addCarOp"
+                type="com.hitachi.Car" uri="/owner/{owner}/car">
+                <description>Add a car to current owner description</description>
+                <to uri="direct:addCarOp"/>
+            </post>
+            <post id="addPassengerOp" uri="/owner/{owner}/car/{car}/passenger">
+                <description>Add some passengers to the car description</description>
+                <to uri="direct:addPassengerOp"/>
+            </post>
+        </rest>
+        <route id="route-6ddc6b77-b6d5-47cd-9263-f84dcd6c90ce">
+            <from id="from-ab184ab1-dbc8-4017-9446-0c514b2c419e" uri="direct:getCarsOp"/>
+            <to id="_to1" uri="bean:carManager?method=getCarList(${header.owner})"/>
+        </route>
+        <route id="route-b11d37c2-b454-404c-bfde-dba020ef835d">
+            <from id="from-c9480d5b-eed5-4f3c-abfd-5d9964ff92e1" uri="direct:addCarOp"/>
+            <setHeader headerName="carEvacuation" id="_setHeader1">
+                <simple>${body}</simple>
+            </setHeader>
+            <to id="_to2" uri="bean:carManager?method=addCar(${header.owner},${body})"/>
+            <choice id="_choice1">
+                <when id="_when1">
+                    <simple>${body}</simple>
+                    <transform id="_transform1">
+                        <simple>${header.carEvacuation}</simple>
+                    </transform>
+                </when>
+                <otherwise id="_otherwise1">
+                    <transform id="_transform2">
+                        <constant>Add car failed.</constant>
+                    </transform>
+                </otherwise>
+            </choice>
+        </route>
+        <route id="route-1db49473-9146-4fda-8f81-1a9b8cc03b6e">
+            <from id="from-f24b3fc9-cf81-43ed-af80-6b557e507fbc" uri="direct:addPassengerOp"/>
+            <setHeader headerName="passengerEvacuation" id="_setHeader2">
+                <simple>${body[passenger_name]}</simple>
+            </setHeader>
+            <to id="_to3" uri="bean:carManager?method=addPassenger(${header.owner},${header.car},${body})"/>
+            <choice id="_choice2">
+                <when id="_when2">
+                    <simple>${body}</simple>
+                    <transform id="_transform3">
+                        <simple>${header.passengerEvacuation} is added as a passenger successfully.</simple>
+                    </transform>
+                </when>
+                <otherwise id="_otherwise2">
+                    <transform id="_transform4">
+                        <simple>${header.passengerEvacuation} cannot be added.</simple>
+                    </transform>
+                </otherwise>
+            </choice>
+        </route>
+    </camelContext>
+</beans>

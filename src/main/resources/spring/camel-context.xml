@@ -37,7 +37,8 @@
                     name="limit" required="false" type="query"/>
                 <to uri="direct:getCarsOp"/>
             </get>
-            <post id="addCarOp" uri="/owner/{owner}/car">
+            <post consumes="application/json" id="addCarOp"
+                type="com.hitachi.Car" uri="/owner/{owner}/car">
                 <description>Add a car to current owner description</description>
                 <to uri="direct:addCarOp"/>
             </post>
@@ -48,27 +49,47 @@
         </rest>
         <route id="route-6ddc6b77-b6d5-47cd-9263-f84dcd6c90ce">
             <from id="from-ab184ab1-dbc8-4017-9446-0c514b2c419e" uri="direct:getCarsOp"/>
-            <toD id="_toD1" uri="bean:carManager?method=test()"/>
-            <toD id="_toD2" uri="bean:carManager?method=init()"/>
-            <toD id="_toD3" uri="bean:carManager?method=getCar(${header.owner})"/>
+            <to id="_to1" uri="bean:carManager?method=getCarList(${header.owner})"/>
         </route>
         <route id="route-b11d37c2-b454-404c-bfde-dba020ef835d">
             <from id="from-c9480d5b-eed5-4f3c-abfd-5d9964ff92e1" uri="direct:addCarOp"/>
-            <to id="to-a0addb07-c470-41ee-bd1c-43be3162fced" uri="direct:501"/>
+            <setHeader headerName="carEvacuation" id="_setHeader1">
+                <simple>${body}</simple>
+            </setHeader>
+            <to id="_to2" uri="bean:carManager?method=addCar(${header.owner},${body})"/>
+            <choice id="_choice1">
+                <when id="_when1">
+                    <simple>${body}</simple>
+                    <transform id="_transform1">
+                        <simple>${header.carEvacuation}</simple>
+                    </transform>
+                </when>
+                <otherwise id="_otherwise1">
+                    <transform id="_transform2">
+                        <constant>Add car failed.</constant>
+                    </transform>
+                </otherwise>
+            </choice>
         </route>
         <route id="route-1db49473-9146-4fda-8f81-1a9b8cc03b6e">
             <from id="from-f24b3fc9-cf81-43ed-af80-6b557e507fbc" uri="direct:addPassengerOp"/>
-            <to id="to-80a44e9a-0296-4c92-92f4-bb30ac5fa54c" uri="direct:501"/>
-        </route>
-        <route id="route-for-unimplemented-operations">
-            <from id="from-for-unimplemented-operations-route" uri="direct:501"/>
-            <log id="log-for-unimplemented-operations-route" message="API operation not yet implemented: ${headers.CamelHttpMethod} ${headers.CamelHttpPath}"/>
-            <setHeader headerName="Exchange.HTTP_RESPONSE_CODE" id="setHeader-for-unimplemented-operations-route">
-                <constant>501</constant>
+            <setHeader headerName="passengerEvacuation" id="_setHeader2">
+                <simple>${body[passenger_name]}</simple>
             </setHeader>
-            <setBody id="setBody-for-unimplemented-operations-route">
-                <simple>API operation not implemented: ${headers.CamelHttpMethod} ${headers.CamelHttpPath}</simple>
-            </setBody>
+            <to id="_to3" uri="bean:carManager?method=addPassenger(${header.owner},${header.car},${body})"/>
+            <choice id="_choice2">
+                <when id="_when2">
+                    <simple>${body}</simple>
+                    <transform id="_transform3">
+                        <simple>${header.passengerEvacuation} is added as a passenger successfully.</simple>
+                    </transform>
+                </when>
+                <otherwise id="_otherwise2">
+                    <transform id="_transform4">
+                        <simple>${header.passengerEvacuation} cannot be added.</simple>
+                    </transform>
+                </otherwise>
+            </choice>
         </route>
     </camelContext>
 </beans>
