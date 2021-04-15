@@ -39,6 +39,17 @@ public class Car {
 	public int getYear() {
 		return year;
 	}
+	
+	@Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof Car)) {
+            return false;
+        }
+        return this.name == ((Car)obj).getName();
+    }
 
 	@Override
 	public String toString() {

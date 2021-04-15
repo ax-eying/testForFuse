@@ -38,7 +38,17 @@ public class CarManager {
 			if (Objects.isNull(list)) {
 				list = new ArrayList<>();
 			}
-			list.add(car);
+			boolean isCarExist = false;
+			for(int i = 0; i < list.size(); i++)
+			{
+				if (list.get(i).equals(car)) {
+					isCarExist = true;
+					break;
+				}
+			}
+			if (!isCarExist) {
+				list.add(car);
+			}
 			ownerCar.replace(owner, list);
 			HashMap<String, List<String>> carPassenger = ownerCarPassenger.get(owner);
 			if (!carPassenger.containsKey(car.getName())) {
