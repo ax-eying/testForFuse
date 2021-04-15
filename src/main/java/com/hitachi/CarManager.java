@@ -10,13 +10,13 @@ public class CarManager {
 	private static HashMap<String, List<Car>> ownerCar = new HashMap<>();
 	private static HashMap<String, HashMap<String, List<String>>> ownerCarPassenger = new HashMap<>();
 
-    static {
-    	init();
+	static {
+		init();
 		System.out.println("initialization completed.");
-    }
+	}
 
 	private static void init() {
-		String owner ="laurent";
+		String owner = "laurent";
 		Car car1 = new Car("86", "Toyota GT86", 2020);
 		Car car2 = new Car("brz", "Subaru BRZ", 2012);
 		Car car3 = new Car("roadster", "Mazda MX-5", 2015);
@@ -39,10 +39,12 @@ public class CarManager {
 				list = new ArrayList<>();
 			}
 			list.add(car);
-			ownerCar.put(owner, list);
-			HashMap<String, List<String>> carPassenger = new HashMap<>();
-			carPassenger.put(car.getName(), new ArrayList<>());
-			ownerCarPassenger.put(owner, carPassenger);
+			ownerCar.replace(owner, list);
+			HashMap<String, List<String>> carPassenger = ownerCarPassenger.get(owner);
+			if (!carPassenger.containsKey(car.getName())) {
+				carPassenger.put(car.getName(), new ArrayList<>());
+			}
+			ownerCarPassenger.replace(owner, carPassenger);
 			return true;
 		} else {
 			return false;
