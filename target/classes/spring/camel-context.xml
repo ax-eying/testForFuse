@@ -93,7 +93,7 @@
                     <transform id="_transform3">
                         <simple>${header.passengerEvacuation}</simple>
                     </transform>
-                    <setHeader headerName="CamelHttpResponseCode" id="_setHeader3">
+                    <setHeader headerName="CamelHttpResponseCode" id="_setHeader5">
                         <constant>201</constant>
                     </setHeader>
                 </when>
@@ -101,7 +101,7 @@
                     <transform id="_transform4">
                         <simple>${header.passengerEvacuation[passenger_name]} cannot be added.</simple>
                     </transform>
-                    <setHeader headerName="CamelHttpResponseCode" id="_setHeader3">
+                    <setHeader headerName="CamelHttpResponseCode" id="_setHeader6">
                         <constant>400</constant>
                     </setHeader>
                 </otherwise>
