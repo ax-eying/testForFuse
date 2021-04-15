@@ -46,6 +46,10 @@
                 <description>Add some passengers to the car description</description>
                 <to uri="direct:addPassengerOp"/>
             </post>
+            <get id="getPassengerOp" uri="/owner/{owner}/car/{car}/passenger">
+                <description>Show the passengers to the car description</description>
+                <to uri="direct:getPassengerOp"/>
+            </get>
         </rest>
         <route id="route-6ddc6b77-b6d5-47cd-9263-f84dcd6c90ce">
             <from id="from-ab184ab1-dbc8-4017-9446-0c514b2c419e" uri="direct:getCarsOp"/>
@@ -82,7 +86,7 @@
             <setHeader headerName="passengerEvacuation" id="_setHeader2">
                 <simple>${body[passenger_name]}</simple>
             </setHeader>
-            <to id="_to3" uri="bean:carManager?method=addPassenger(${header.owner},${header.car},${body})"/>
+            <to id="_to3" uri="bean:carManager?method=addPassenger(${header.owner},${header.car},${body[passenger_name]})"/>
             <choice id="_choice2">
                 <when id="_when2">
                     <simple>${body}</simple>
@@ -96,6 +100,10 @@
                     </transform>
                 </otherwise>
             </choice>
+        </route>
+        <route id="_route1">
+            <from id="_from1" uri="direct:getPassengerOp"/>
+            <to id="_to4" uri="bean:carManager?method=getPassenger(${header.owner},${header.car})"/>
         </route>
     </camelContext>
 </beans>

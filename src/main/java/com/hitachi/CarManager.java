@@ -8,7 +8,7 @@ import java.util.Objects;
 public class CarManager {
 
 	private static HashMap<String, List<Car>> ownerCar = new HashMap<>();
-	private static HashMap<String, HashMap<String, String>> ownerCarPassenger = new HashMap<>();
+	private static HashMap<String, HashMap<String, List<String>>> ownerCarPassenger = new HashMap<>();
 
     static {
     	init();
@@ -25,10 +25,10 @@ public class CarManager {
 		list.add(car2);
 		list.add(car3);
 		ownerCar.put(owner, list);
-		HashMap<String, String> carPassenger = new HashMap<String, String>();
-		carPassenger.put(car1.getName(), null);
-		carPassenger.put(car2.getName(), null);
-		carPassenger.put(car3.getName(), null);
+		HashMap<String, List<String>> carPassenger = new HashMap<>();
+		carPassenger.put(car1.getName(), new ArrayList<>());
+		carPassenger.put(car2.getName(), new ArrayList<>());
+		carPassenger.put(car3.getName(), new ArrayList<>());
 		ownerCarPassenger.put(owner, carPassenger);
 	}
 
@@ -40,8 +40,8 @@ public class CarManager {
 			}
 			list.add(car);
 			ownerCar.put(owner, list);
-			HashMap<String, String> carPassenger = new HashMap<String, String>();
-			carPassenger.put(car.getName(), null);
+			HashMap<String, List<String>> carPassenger = new HashMap<>();
+			carPassenger.put(car.getName(), new ArrayList<>());
 			ownerCarPassenger.put(owner, carPassenger);
 			return true;
 		} else {
@@ -61,18 +61,18 @@ public class CarManager {
 
 	public static boolean addPassenger(String owner, String name, String passenger) {
 		if (ownerCarPassenger.containsKey(owner)) {
-			HashMap<String, String> carPassenger = ownerCarPassenger.get(owner);
+			HashMap<String, List<String>> carPassenger = ownerCarPassenger.get(owner);
 			if (carPassenger.containsKey(name)) {
-				carPassenger.put(name, passenger);
+				carPassenger.get(name).add(passenger);
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public static String getPassenger(String owner, String name) {
+	public static List<String> getPassenger(String owner, String name) {
 		if (ownerCarPassenger.containsKey(owner)) {
-			HashMap<String, String> carPassenger = ownerCarPassenger.get(owner);
+			HashMap<String, List<String>> carPassenger = ownerCarPassenger.get(owner);
 			if (carPassenger.containsKey(name)) {
 				return carPassenger.get(name);
 			}
