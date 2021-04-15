@@ -84,19 +84,19 @@
         <route id="route-1db49473-9146-4fda-8f81-1a9b8cc03b6e">
             <from id="from-f24b3fc9-cf81-43ed-af80-6b557e507fbc" uri="direct:addPassengerOp"/>
             <setHeader headerName="passengerEvacuation" id="_setHeader2">
-                <simple>${body[passenger_name]}</simple>
+                <simple>${body}</simple>
             </setHeader>
             <to id="_to3" uri="bean:carManager?method=addPassenger(${header.owner},${header.car},${body[passenger_name]})"/>
             <choice id="_choice2">
                 <when id="_when2">
                     <simple>${body}</simple>
                     <transform id="_transform3">
-                        <simple>${header.passengerEvacuation} is added as a passenger successfully.</simple>
+                        <simple>${header.passengerEvacuation}</simple>
                     </transform>
                 </when>
                 <otherwise id="_otherwise2">
                     <transform id="_transform4">
-                        <simple>${header.passengerEvacuation} cannot be added.</simple>
+                        <simple>${header.passengerEvacuation[passenger_name]} cannot be added.</simple>
                     </transform>
                 </otherwise>
             </choice>
