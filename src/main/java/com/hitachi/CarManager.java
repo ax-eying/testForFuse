@@ -31,6 +31,13 @@ public class CarManager {
 		carPassenger.put(car3.getName(), new ArrayList<>());
 		ownerCarPassenger.put(owner, carPassenger);
 	}
+	
+	public static void restore() {
+		ownerCar.clear();
+		ownerCarPassenger.clear();
+		init();
+		System.out.println("restored to initialization.");
+	}
 
 	public static boolean addCar(String owner, Car car) {
 		if (ownerCar.containsKey(owner)) {
